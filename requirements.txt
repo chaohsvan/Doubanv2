@@ -1,0 +1,8 @@
+pandas
+tqdm
+requests
+Pillow
+beautifulsoup4
+jieba
+Flask
+lxml

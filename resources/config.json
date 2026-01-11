@@ -1,0 +1,10 @@
+{
+  "tmdb_api_key": "your_tmdb_apikey(free!)",
+  "proxy": {
+        "http": "http://127.0.0.1:7890",
+        "https": "http://127.0.0.1:7897"
+    },
+  "douban_username": "123456DOUBAN_ID"
+,
+  "movie_count": 20
+}

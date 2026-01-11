@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影详情 (智能矩阵版)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ... (保留之前的 CSS 变量和基础样式) ... */
+        :root {
+            --bg-1: #0f0c29;
+            --bg-2: #302b63;
+            --bg-3: #24243e;
+            --glass-strong: rgba(20, 20, 35, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --neon-cyan: #00F5FF;
+            --neon-pink: #FF2A6D;
+            --neon-purple: #7B68EE;
+            --neon-gold: #FFD700;
+            --text-main: #F0F8FF;
+            --text-dim: #8892b0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text-main);
+            background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+            background-size: 400% 400%;
+            animation: bgAnim 20s ease infinite;
+            min-height: 100vh;
+            padding-bottom: 5rem;
+        }
+        @keyframes bgAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .main-card {
+            background: var(--glass-strong);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: visible; /* 允许搜索下拉框溢出 */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            position: relative;
+            min-height: 400px;
+        }
+
+        /* ----------------------------------
+           NEW: 搜索栏样式 (Search Bar)
+           ---------------------------------- */
+        .search-container {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            width: 300px;
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none; /* 默认隐藏 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .search-results.active { display: block; }
+
+        .result-item {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .result-item:last-child { border-bottom: none; }
+        .result-item:hover { background: rgba(255,255,255,0.1); }
+        
+        .r-title { font-weight: bold; color: #fff; display: block; }
+        .r-sub { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; display: block; }
+
+        /* ----------------------------------
+           Existing Styles (精简后的)
+           ---------------------------------- */
+        .hero { position: relative; min-height: 550px; display: flex; align-items: flex-end; padding: 4rem; overflow: hidden; border-radius: 24px 24px 0 0; }
+        .hero-bg { position: absolute; top:0; left:0; width:100%; height:100%; background-size: cover; background-position: center top; z-index: -1; mask-image: linear-gradient(to bottom, black 30%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%); transform: scale(1.05); filter: blur(2px); }
+        .hero-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, rgba(15,12,41,0.2) 0%, rgba(20, 20, 35, 0.9) 90%, var(--glass-strong) 100%); z-index: 0; }
+        .hero-body { position: relative; z-index: 2; display: flex; gap: 3.5rem; width: 100%; align-items: flex-end; }
+        .poster-frame { width: 300px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.8); flex-shrink: 0; transform: translateY(30px); }
+        .poster-frame img { width: 100%; height: auto; display: block; }
+        
+        .title-group { padding-bottom: 10px; flex: 1; }
+        .title-group h1 { font-size: 3.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; background: linear-gradient(to right, #fff, #aab2bd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 10px 30px rgba(0,0,0,0.5); letter-spacing: 1px; }
+        
+        .spec-tags { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .tag { padding: 0.5rem 1.2rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-size: 1rem; color: #e0e6ed; display: flex; align-items: center; gap: 0.6rem; backdrop-filter: blur(5px); }
+        .tag i { color: var(--neon-pink); }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 400px; gap: 4rem; padding: 4rem 4rem 3rem 4rem; }
+        .left-col { display: flex; flex-direction: column; gap: 2.5rem; }
+        .section-header { font-size: 1.2rem; color: var(--neon-purple); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+        .section-header::after { content:''; height: 1px; flex-grow: 1; background: linear-gradient(to right, var(--neon-purple), transparent); opacity: 0.3; }
+        .text-content { font-size: 1.1rem; line-height: 1.8; color: #d0d5e0; text-align: justify; }
+        
+        .right-col { display: flex; flex-direction: column; gap: 2rem; }
+        .personal-highlight { background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(123, 104, 238, 0.15)); border: 1px solid rgba(0, 245, 255, 0.3); border-radius: 20px; padding: 2rem; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .ph-label { position: absolute; top: -12px; left: 20px; background: var(--bg-2); padding: 0 10px; color: var(--neon-cyan); font-size: 0.8rem; letter-spacing: 2px; border-radius: 4px; }
+        .ph-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.2rem; }
+        .ph-score { font-size: 2.5rem; font-weight: 800; color: var(--neon-gold); line-height: 1; }
+        .ph-date { font-family: monospace; color: rgba(255,255,255,0.5); }
+        .ph-comment { font-size: 1.15rem; color: #fff; font-style: italic; line-height: 1.6; border-left: 3px solid var(--neon-cyan); padding-left: 1rem; }
+        
+        .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .score-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; text-align: center; transition: transform 0.2s; }
+        .score-box:hover { transform: translateY(-3px); background: rgba(255,255,255,0.06); }
+        .score-val { font-size: 1.6rem; font-weight: 800; color: #fff; }
+        .score-src { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; margin-top: 0.3rem; }
+
+        .matrix-section { background: rgba(0,0,0,0.25); border-top: 1px solid var(--glass-border); padding: 3rem 4rem; }
+        .matrix-header { font-size: 1.4rem; color: #fff; margin-bottom: 2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .matrix-header i { color: var(--neon-pink); }
+        .matrix-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .matrix-item { display: flex; flex-direction: column; gap: 0.5rem; min-height: 0; }
+        .m-key { font-size: 0.75rem; color: var(--neon-purple); font-family: Consolas, Monaco, 'Courier New', monospace; opacity: 0.9; letter-spacing: 0.5px; }
+        .m-value { font-size: 0.95rem; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.04); border-left: 2px solid rgba(255,255,255,0.15); padding: 0.6rem 0.8rem; border-radius: 0 6px 6px 0; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; line-height: 1.5; }
+        .m-value.empty { color: rgba(255,255,255,0.2); font-style: italic; padding: 0.4rem 0.8rem; }
+
+        @media(max-width: 1024px) {
+            .hero { padding: 2rem; flex-direction: column; align-items: center; text-align: center; }
+            .hero-body { flex-direction: column; align-items: center; gap: 2rem; }
+            .poster-frame { width: 220px; transform: translateY(0); }
+            .data-grid { grid-template-columns: 1fr; padding: 2rem; gap: 3rem; }
+            .left-col { order: 2; .right-col { order: 1; } }
+            .title-group h1 { font-size: 2.8rem; }
+            .matrix-section { padding: 2rem; }
+            .search-container { width: 100%; position: relative; top: 0; right: 0; margin-bottom: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search movie, director, region...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+        </div>
+
+        <div class="main-card" id="app">
+            <div style="text-align:center; padding:5rem; color:rgba(255,255,255,0.6); font-size: 1.2rem;">
+                <i class="fas fa-spinner fa-spin"></i> 正在初始化界面...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let dbRow = {};
+
+        // 配置
+        const usedKeys = new Set([
+            "show_movid_title", "show_img_backdrop_path", "show_img_poster_path",
+            "show_release_premiere_date_main", "show_spec_duration_main", "show_genre",
+            "show_release_douban_region", "show_language", "show_intro_chs",
+            "show_crew_director_main", "show_crew_writer_main", "show_crew_douban_personnel",
+            "show_personal_my_rating", "show_personal_my_watch_date", "show_personal_my_comment",
+            "show_rate_staticdouban_rating", "show_rate_tmdb_vote_average",
+            "show_rate_imdb_rating", "show_rate_rotten_tomatoes2_tomatometer"
+        ]);
+
+        const val = (v) => (v && String(v).trim() !== "") ? v : null;
+        const formatVal = (v) => v ? v : '<span class="empty">/</span>';
+        
+        function renderScore(label, value, color) {
+            if (!value) return '';
+            return `
+                <div class="score-box" style="border-bottom: 3px solid ${color}">
+                    <div class="score-val">${value}</div>
+                    <div class="score-src" style="color:${color}">${label}</div>
+                </div>
+            `;
+        }
+
+        function renderMovie() {
+            const app = document.getElementById('app');
+            if (!dbRow || Object.keys(dbRow).length === 0) {
+                app.innerHTML = '<div style="text-align:center; padding:5rem; color:#fff;"><i class="fas fa-sync fa-spin"></i> 正在渲染数据...</div>';
+                return;
+            }
+            const allKeys = Object.keys(dbRow);
+            const matrixKeys = allKeys.filter(key => !usedKeys.has(key)).sort();
+            const backdrop = val(dbRow.show_img_backdrop_path) || "https://via.placeholder.com/1920x1080?text=No+Backdrop";
+            const poster = val(dbRow.show_img_poster_path) || "https://via.placeholder.com/500x750?text=No+Poster";
+
+            const html = `
+                <div class="hero">
+                    <div class="hero-bg" style="background-image: url('${backdrop}')"></div>
+                    <div class="hero-overlay"></div>
+                    <div class="hero-body">
+                        <div class="poster-frame"><img src="${poster}" alt="Poster"></div>
+                        <div class="title-group">
+                            <h1>${val(dbRow.show_movid_title) || 'Untitled'}</h1>
+                            <div class="spec-tags">
+                                <span class="tag"><i class="far fa-calendar-alt"></i> ${val(dbRow.show_release_premiere_date_main) || '-'}</span>
+                                <span class="tag"><i class="far fa-clock"></i> ${val(dbRow.show_spec_duration_main) || '-'}</span>
+                                <span class="tag"><i class="fas fa-film"></i> ${val(dbRow.show_genre) || '-'}</span>
+                                <span class="tag"><i class="fas fa-globe-asia"></i> ${val(dbRow.show_release_douban_region) || '-'}</span>
+                                <span class="tag"><i class="fas fa-language"></i> ${val(dbRow.show_language) || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-grid">
+                    <div class="left-col">
+                        <div class="section">
+                            <div class="section-header"><i class="fas fa-align-left"></i> 剧情简介</div>
+                            <div class="text-content">${val(dbRow.show_intro_chs) || '暂无简介'}</div>
+                        </div>
+                        <div class="section">
+                            <div class="section-header"><i class="fas fa-video"></i> 导演 & 编剧</div>
+                            <div class="text-content" style="color:#fff; font-weight:bold;">
+                                ${val(dbRow.show_crew_director_main) || '-'}<br>
+                                <span style="font-weight:normal; font-size:0.9em; color:var(--text-dim)">编剧: ${val(dbRow.show_crew_writer_main) || '-'}</span>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="section-header"><i class="fas fa-users"></i> 演职员表</div>
+                            <div class="text-content" style="font-size:0.95rem; color:var(--text-dim)">${val(dbRow.show_crew_douban_personnel) || '-'}</div>
+                        </div>
+                    </div>
+                    <div class="right-col">
+                        <div class="personal-highlight">
+                            <div class="ph-label">MY RECORD</div>
+                            <div class="ph-top">
+                                <div class="ph-score">${val(dbRow.show_personal_my_rating) || '-'}</div>
+                                <div class="ph-date"><i class="far fa-check-circle"></i> ${val(dbRow.show_personal_my_watch_date) || 'Unknown Date'}</div>
+                            </div>
+                            <div class="ph-comment">${val(dbRow.show_personal_my_comment) || '无评论'}</div>
+                        </div>
+                        <div class="scores-grid">
+                            ${renderScore('Douban', dbRow.show_rate_staticdouban_rating, '#007722')}
+                            ${renderScore('TMDB', dbRow.show_rate_tmdb_vote_average, '#01b4e4')}
+                            ${renderScore('IMDb', dbRow.show_rate_imdb_rating, '#f5c518')}
+                            ${renderScore('Rotten Tomatoes', dbRow.show_rate_rotten_tomatoes2_tomatometer ? dbRow.show_rate_rotten_tomatoes2_tomatometer + '%' : null, '#fa320a')}
+                        </div>
+                    </div>
+                </div>
+                <div class="matrix-section">
+                    <div class="matrix-header"><i class="fas fa-server"></i> 更多元数据 (Metadata Matrix)</div>
+                    <div class="matrix-container">
+                        ${matrixKeys.map(key => `<div class="matrix-item"><div class="m-key">${key}</div><div class="m-value ${!val(dbRow[key]) ? 'empty' : ''}">${formatVal(val(dbRow[key]))}</div></div>`).join('')}
+                    </div>
+                </div>
+            `;
+            app.innerHTML = html;
+        }
+
+        // ------------------------------------------------
+        // 数据获取 (可支持指定 link)
+        // ------------------------------------------------
+        async function fetchAndRender(link = null) {
+            const app = document.getElementById('app');
+            try {
+                // 构建 API URL
+                let url = '/api/movie';
+                if (link) {
+                    url += `?link=${encodeURIComponent(link)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                
+                const data = await response.json();
+                dbRow = data;
+                renderMovie();
+                
+            } catch (error) {
+                console.error('获取数据失败:', error);
+                app.innerHTML = `<div style="text-align:center; padding:5rem; color:#ff6b6b;">加载失败: ${error.message}</div>`;
+            }
+        }
+
+        // ------------------------------------------------
+        // 搜索逻辑
+        // ------------------------------------------------
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        let debounceTimer;
+
+        // 监听输入
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            
+            // 防抖：停止输入 300ms 后才发送请求
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (query.length > 0) {
+                    performSearch(query);
+                } else {
+                    searchResults.classList.remove('active');
+                }
+            }, 300);
+        });
+
+        // 隐藏搜索结果（点击外部）
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        async function performSearch(query) {
+            try {
+                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                
+                renderSearchResults(data);
+            } catch (err) {
+                console.error("Search failed", err);
+            }
+        }
+
+        // 找到 renderSearchResults 函数，修改 html 模板部分
+function renderSearchResults(results) {
+    if (!results || results.length === 0) {
+        searchResults.innerHTML = '<div class="result-item" style="color:gray; cursor:default;">No results found</div>';
+    } else {
+        const html = results.map(item => `
+            <div class="result-item" onclick="selectMovie('${item.show_douban_link}')">
+                <span class="r-title">${item.show_movid_name || item.show_movid_title}</span>
+                <span class="r-sub">
+                    ${item.show_release_douban_region || 'Region N/A'} | 
+                    ${item.show_movid_title || ''} (${item.show_release_premiere_date_main || 'N/A'})
+                </span>
+            </div>
+        `).join('');
+        searchResults.innerHTML = html;
+    }
+    searchResults.classList.add('active');
+}
+
+        // 点击搜索结果调用此函数
+        window.selectMovie = function(link) {
+            // 关闭搜索框
+            searchResults.classList.remove('active');
+            searchInput.value = ''; // 可选：清空输入
+            
+            // 加载新数据
+            fetchAndRender(link);
+        }
+
+        // 初始加载（随机）
+        fetchAndRender();
+
+    </script>
+</body>
+</html>
