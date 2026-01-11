@@ -18,23 +18,23 @@
 
 ## 效果展示
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-40-49-Report_Part_1_section-gshow_v1.png)
+![](./tempshow/Report_Part_1_section-gshow_v1.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-18-Report_Part_2_section-gshow_v2.png)
+![](./tempshow/Report_Part_2_section-gshow_v2.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-25-Report_Part_3_section-gshow_v3.png)
+![](./tempshow/Report_Part_3_section-gshow_v3.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-29-Report_Part_4_section-gshow_v4.png)
+![](./tempshow/Report_Part_4_section-gshow_v4.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-34-Report_Part_5_section-gshow_v5.png)
+![](./tempshow/Report_Part_5_section-gshow_v5.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-37-Report_Part_6_section-gshow_v6.png)
+![](./tempshow/Report_Part_6_section-gshow_v6.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-40-Report_Part_7_section-gshow_v7.png)
+![](./tempshow/Report_Part_7_section-gshow_v7.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-59-Report_Part_8_section-gshow_v8.png)
+![](./tempshow/Report_Part_8_section-gshow_v8.png)
 
-![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-42-02-Report_Part_9_section-gshow_v9.png)
+![](./tempshow/Report_Part_9_section-gshow_v9.png)
 
 
 
