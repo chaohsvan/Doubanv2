@@ -10,7 +10,7 @@
 
 > **Disclaimer:** This project is for educational purposes only. Data is sourced from IMDb, TMDB, and Rotten Tomatoes. The copyright of the data belongs to the respective owners. Please comply with their Terms of Service.
 >
-> **声明：** 本项目仅供学习交流。数据来源于 IMDb, TMDB 和烂番茄，数据版权归原作者所有，请遵守相关服务条款。
+> **声明：** 本项目仅供学习交流。数据来源于 豆瓣, IMDb, TMDB 和烂番茄，数据版权归原作者所有，请遵守相关服务条款。
 
 ---
 
@@ -64,7 +64,7 @@ pip install -r requirements.txt
 
 由于数据量较大且涉及版权，静态数据库文件托管在外部网盘。
 
-1. **下载数据文件**：[Google Drive 下载链接](https://drive.google.com/file/d/1pjAVEtx5BmsJF96E4TtA3A-mKsJ6UTau/view?usp=sharing)
+1. **下载数据文件**：[Google Drive 下载链接](https://drive.google.com/file/d/1pjAVEtx5BmsJF96E4TtA3A-mKsJ6UTau/view?usp=sharing)[百度云 下载链接](https://pan.baidu.com/s/1ZfABAmrV23DHKIN_CcVGlg?pwd=lvmv)
 2. **解压与放置**：请将下载的文件解压并替换到以下目录：
 `Doubanv2/resources/StaticMovieDB`
 
