@@ -1,5 +1,7 @@
 # Doubanv2
+
 (Vibe Coding) Analyze and show personal or others' (open to the public) cinema records on the Douban platform with HTML, based on static databases. And use the TMDB API to download and show posters, also with local record search.
+
 # DoubanV2 Movie Data Project
 
 > **✨ Powered by Vibe Coding** > 这是一个基于 AI 辅助编程构建的电影数据聚合项目，支持多用户与本地静态数据库分析与展示。
@@ -9,8 +11,32 @@
 ## ⚠️ 免责声明 (Disclaimer)
 
 > **Disclaimer:** This project is for educational purposes only. Data is sourced from IMDb, TMDB, and Rotten Tomatoes. The copyright of the data belongs to the respective owners. Please comply with their Terms of Service.
->
+> 
 > **声明：** 本项目仅供学习交流。数据来源于 豆瓣, IMDb, TMDB 和烂番茄，数据版权归原作者所有，请遵守相关服务条款。
+
+---
+
+## 效果展示
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-40-49-Report_Part_1_section-gshow_v1.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-18-Report_Part_2_section-gshow_v2.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-25-Report_Part_3_section-gshow_v3.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-29-Report_Part_4_section-gshow_v4.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-34-Report_Part_5_section-gshow_v5.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-37-Report_Part_6_section-gshow_v6.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-40-Report_Part_7_section-gshow_v7.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-41-59-Report_Part_8_section-gshow_v8.png)
+
+![](/home/chaohsuan/.config/marktext/images/2026-01-11-18-42-02-Report_Part_9_section-gshow_v9.png)
+
+
 
 ---
 
@@ -23,19 +49,21 @@
 * **代理支持**：支持配置网络代理，方便下载 TMDB 海报资源。
 
 ---
+
 ## ⚡️ 快速开始 (Quick Start)
 
 请按照以下顺序配置并运行项目：
 
 **1. 部署静态数据库**
 下载并将解压后的静态数据库文件（`.csv`, `.tsv` 等）放入项目的资源目录中：
+
 * **目标路径**: `Doubanv2/resources/StaticMovieDB/`
 
 **2. 安装依赖库**
 在项目根目录下，运行以下命令安装所需的第三方库：
+
 ```bash
 pip install -r requirements.txt
-
 ```
 
 **3. 修改配置文件**
@@ -46,18 +74,18 @@ pip install -r requirements.txt
 
 ```bash
 python Doubanv2/src/doubanv2/__init__.py
-
 ```
+
 ---
 
 ## 🛠️ 安装与使用 (Getting Started)
 
 ### 1. 环境准备
+
 确保你的环境已安装 Python，并安装项目依赖：
 
 ```bash
 pip install -r requirements.txt
-
 ```
 
 ### 2. 数据准备 (必做)
@@ -66,12 +94,11 @@ pip install -r requirements.txt
 
 1. **下载数据文件**：[Google Drive 下载链接](https://drive.google.com/file/d/1pjAVEtx5BmsJF96E4TtA3A-mKsJ6UTau/view?usp=sharing)[百度云 下载链接](https://pan.baidu.com/s/1ZfABAmrV23DHKIN_CcVGlg?pwd=lvmv)
 2. **解压与放置**：请将下载的文件解压并替换到以下目录：
-`Doubanv2/resources/StaticMovieDB`
+   `Doubanv2/resources/StaticMovieDB`
 
 **目录结构应如下所示：**
 
 ```text
-
 [Doubanv2/resources/StaticMovieDB]
 └─$ tree .              
     .
@@ -92,13 +119,11 @@ pip install -r requirements.txt
 
     1 directory, 14 files
 ---
-
 ```
 
 ### 3. 配置文件
 
 修改配置文件 `Doubanv2/resources/config.json`。你需要填入个人的豆瓣 ID、TMDB API Key 以及网络代理设置(用于下载tmdb海报)。
-
 
 ### 4. 运行项目
 
@@ -106,7 +131,6 @@ pip install -r requirements.txt
 
 ```bash
 python Doubanv2/src/doubanv2/__init__.py
-
 ```
 
 ---
